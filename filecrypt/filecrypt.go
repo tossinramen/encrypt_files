@@ -38,12 +38,12 @@ func Encrypt(source string, password[] byte){
 	if err != nil{
 		panic(err.Error())
 	}
-	aesgcm, err := ciper.NewGCM(block)
+	aesgcm, err := cipher.NewGCM(block)
 	if err != nil{
 		panic(err.Error())
 	}
 	ciphertext := aesgcm.Seal(nil, nonce, plaintext, nil)
-	ciphertext = append(cipertext, nonce...)
+	ciphertext = append(ciphertext, nonce...)
 	dstFile, err := os.Create(source)
 	if err != nil{
 		panic(err.Error())
@@ -74,7 +74,7 @@ func Decrypt(source string, password []byte){
 	str := hex.EncodeToString(salt)
 	nonce, err := hex.DecodeString(str)
 
-	dk := pbkdf2.Ley(name, nonce, 4096, 32, sha1.New)
+	dk := pbkdf2.Key(key, nonce, 4096, 32, sha1.New)
 	block, err := aes.NewCipher(dk)
 	if err != nil{
 		panic(err.Error)
@@ -89,7 +89,7 @@ func Decrypt(source string, password []byte){
 	if err != nil{
 		panic(err.Error())
 	}
-
+	dstFile, err := os.Create(source)
 	defer dstFile.Close()
 
 	_, err = dstFile.Write(plaintext)

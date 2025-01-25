@@ -14,23 +14,7 @@ A simple and efficient file encryption utility written in Go. This tool allows y
 ---
 
 ## Usage
-
-# Display help message
 go run . help
-
-# Encrypt a file
 go run . encrypt <file-path>
-# Example:
-# go run . encrypt secret.txt
-# Enter password: ****
-# Confirm password: ****
-# Encrypting...
-# File successfully protected
-
-# Decrypt a file
 go run . decrypt <file-path>
-# Example:
-# go run . decrypt secret.txt
-# Enter password: ****
-# Decrypting...
-# File successfully decrypted
+

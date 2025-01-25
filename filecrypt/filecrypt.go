@@ -55,10 +55,23 @@ func encryptHandle() {
 	fmt.Println("\nEncrypting...")
 	filecrypt.Encrypt(file, password)
 	fmt.Println("\n file successfully protected")
-	
+
 }
 
 func decryptHandle() {
+	if len(os.Args) < 3{
+		Println("Missing the path to the file. For more information, run go run . help")
+		os.Exit(0)
+	}
+	file := os.Args[2]
+	if !validateFile(file){
+		panic("File not found")
+}
+	fmt.Print("Enter password:")
+	password, _ := term.ReadPassword(0)
+	fmt.Println("\nDecrypting...")
+	filecrypt.Decrypt(file, password)
+	fmt.Println("\n File successfully decrypted")
 
 }
 

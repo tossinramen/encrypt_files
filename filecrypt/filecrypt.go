@@ -52,6 +52,10 @@ func encryptHandle() {
 		panic("File not found")
 	}
 	password := getPassword()
+	fmt.Println("\nEncrypting...")
+	filecrypt.Encrypt(file, password)
+	fmt.Println("\n file successfully protected")
+	
 }
 
 func decryptHandle() {

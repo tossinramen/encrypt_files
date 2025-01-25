@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"golang.org/x/term"
+)
 
 func main() {
 	if len(os.Args) < 2 {
@@ -47,13 +51,23 @@ func encryptHandle() {
 	if !validateFile(file){
 		panic("File not found")
 	}
+	password := getPassword()
 }
 
 func decryptHandle() {
 
 }
 
-func getPassword() {
+func getPassword() []byte{
+	fmt.Print("Enter password")
+	password, _ := term.ReadPassword(0)
+	fmt.Print("\nConfirm Password: ")
+	password2, _ := term.ReadPassword(0)
+	if !validatePassword(password, password2){
+		fmt.Print("\nPasswords do not match. Please try again\n")
+		return getPassword()
+	}
+	return password
 
 }
 

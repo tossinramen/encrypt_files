@@ -1,106 +1,57 @@
-package main
+package filecrypt
 
 import (
-	"fmt"
-
-	"golang.org/x/term"
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
+	"crypto/sha1"
+	"io"
+	"os"
+	"golang.org/x/crypto/pbkdf2"
 )
 
-func main() {
-	if len(os.Args) < 2 {
-		printHelp()
-		os.Exit(0)
+
+func Encrypt(source string, password[] byte){
+	if _, err := os.Stat(source); os.IsNotExist(err){
+		panic(err.Error())
 	}
-	function := os.Args[1]
-	switch function {
-	case "help":
-		printHelp()
-	case "encrypt":
-		encryptHandle()
-	case "decrypt":
-		decryptHandle()
-	default:
-		fmt.Println("Run encrypt to encrypt a file, and decrypt to decrypt a file.")
-		os.Exit(1)
+	srcFile, err := os.Open(source)
+	if err != nil{
+		panic(err.Error())
+	}
+	defer srcFile.Close()
+	plaintext, err := io.ReadAll(srcFile)
+	if err != nil {
+		panic(err.Error())
+
+	}
+	key := password
+	nonce := make([]byte, 12)
+	if _,err := io.ReadFull(rand.Reader, nonce); err != nil {
+		panic(err.Error())
+	}
+	dk := pbkdf2.Key(key, nonce, 4096, 32, sha1.New)
+	block, err := aes.NewCipher(dk)
+	if err != nil{
+		panic(err.Error())
+	}
+	aesgcm, err != ciper.NewGCM(block)
+	if err != nil{
+		panic(err.Error())
+	}
+	ciphertext := aesgcm.Seal(nil, nonce, plaintext, nil)
+	ciphertext = append(cipertext, nonce...)
+	dstFile, err := os.Create(source)
+	if err != nil{
+		panic(err.Error())
+	}
+	defer dstFile.Close()
+	_, err = dstFile.Write(ciphertext)
+	if err != nil{
+		panic(err.Error())
 	}
 }
 
-func printHelp() {
-	fmt.Println("File encryption")
-	fmt.Println("Simple file encrypter for your day to day needs")
-	fmt.Println("")
-	fmt.Println("Usage:")
-	fmt.Println("")
-	fmt.Println("\tgo run . encrypt /path/to/your/file")
-	fmt.Println("")
-	fmt.Println("Commands:")
-	fmt.Println("")
-	fmt.Println("\t encrypt \tEncrypts a file given a password")
-	fmt.Println("\t decrypt \tTries to decrypt a file using a password")
-	fmt.Println("\t help\t\tDisplays help text")
-	fmt.Println("")
-
-}
-
-func encryptHandle() {
-	if len(os.Args) <3 {
-		Println("Missing the path to the file. For more information, run go run . help")
-		os.Exit(0)
-	}
-	file := os.Args[2]
-	if !validateFile(file){
-		panic("File not found")
-	}
-	password := getPassword()
-	fmt.Println("\nEncrypting...")
-	filecrypt.Encrypt(file, password)
-	fmt.Println("\n file successfully protected")
-
-}
-
-func decryptHandle() {
-	if len(os.Args) < 3{
-		Println("Missing the path to the file. For more information, run go run . help")
-		os.Exit(0)
-	}
-	file := os.Args[2]
-	if !validateFile(file){
-		panic("File not found")
-}
-	fmt.Print("Enter password:")
-	password, _ := term.ReadPassword(0)
-	fmt.Println("\nDecrypting...")
-	filecrypt.Decrypt(file, password)
-	fmt.Println("\n File successfully decrypted")
-
-}
-
-func getPassword() []byte{
-	fmt.Print("Enter password")
-	password, _ := term.ReadPassword(0)
-	fmt.Print("\nConfirm Password: ")
-	password2, _ := term.ReadPassword(0)
-	if !validatePassword(password, password2){
-		fmt.Print("\nPasswords do not match. Please try again\n")
-		return getPassword()
-	}
-	return password
-
-}
-
-func validatePassword(password1 []byte, password2 []byte) bool {
-	if !bytes.Equal(password1, password2){
-		return false
-	}
-	return true
-
-}
-
-func validateFile(file string) bool {
-	if _, err := os.Stat(file); os.IsNotExist(err){
-		return false
-	}
-	return true
-
+func Decrypt(){
 
 }

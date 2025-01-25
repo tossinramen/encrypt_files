@@ -71,7 +71,11 @@ func getPassword() []byte{
 
 }
 
-func validatePassword() {
+func validatePassword(password1 []byte, password2 []byte) bool {
+	if !bytes.Equal(password1, password2){
+		return false
+	}
+	return true
 
 }
 

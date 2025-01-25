@@ -39,7 +39,14 @@ func printHelp() {
 }
 
 func encryptHandle() {
-
+	if len(os.Args) <3 {
+		Println("Missing the path to the file. For more information, run go run . help")
+		os.Exit(0)
+	}
+	file := os.Args[2]
+	if !validateFile(file){
+		panic("File not found")
+	}
 }
 
 func decryptHandle() {
@@ -54,6 +61,11 @@ func validatePassword() {
 
 }
 
-func validateFile() {
+func validateFile(file string) bool {
+	if _, err := os.Stat(file); os.IsNotExist(err){
+		return false
+	}
+	return true
+
 
 }
